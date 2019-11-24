@@ -2,6 +2,8 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var sqlHelper = require('./dbhelper');
+var randomWords = require('random-words');
+
 
 let registeredRooms = ["Room1", "Room2", "Room3"]; 
 
@@ -27,7 +29,7 @@ const newLocal = 'chatmessage';
           
           socket.join(room);
 
-          io.of("/my-namespace").in(room).emit("message", "New user has been connected to the " + room + " Room");
+          io.of("/my-namespace").in(room).emit("message", randomWords());
           return socket.emit("roomresult", "Valid Room Name: " + room);
         } else {
          //No room with the specified Name! (or it could be another reason).
@@ -38,7 +40,8 @@ const newLocal = 'chatmessage';
     console.log('chat message');
     socket.on('chatmessage', function (data) {
       console.log('chatmessage',data);
-      io.of('/my-namespace').to(data.room).emit('messagebroadcast', data.message);
+      io.of('/my-namespace').to(data.room).emit('message', randomWords());
+      io.of('/my-namespace').to(data.room).emit('messagebroadcast',data.message );
 
    }); 
  });
@@ -57,7 +60,8 @@ const newLocal = 'chatmessage';
           
           socket.join(room);
 
-          io.of("/my-namespace1").in(room).emit("message", "New user has been connected to the " + room + " Room");
+          //io.of("/my-namespace1").in(room).emit("message", "New user has been connected to the " + room + " Room");
+          io.of("/my-namespace1").in(room).emit("message", randomWords());
           return socket.emit("roomresult", "Valid Room Name: " + room);
         } else {
          //No room with the specified Name! (or it could be another reason).
@@ -68,6 +72,7 @@ const newLocal = 'chatmessage';
     console.log('chat message');
     socket.on('chatmessage', function (data) {
       console.log('chatmessage',data);
+      io.of('/my-namespace1').to(data.room).emit('message', randomWords());
       io.of('/my-namespace1').to(data.room).emit('messagebroadcast', data.message);
 
    }); 
